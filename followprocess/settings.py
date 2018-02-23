@@ -53,16 +53,25 @@ INSTALLED_APPS = [
 
 REDIS_SERVER    = ""
 RABBITMQ_SERVER = ""
+RABBITMQ_USER   = ""
+RABBITMQ_PASS   = ""
+RABBITMQ_VHOST  = ""
 
 if IS_DOCKER:
     REDIS_SERVER    = "redis"
     RABBITMQ_SERVER = "rabbitmq"
+    RABBITMQ_USER   = "followprocess"
+    RABBITMQ_PASS   = "followprocess"
+    RABBITMQ_VHOST  = "followprocess_host"
 else:
     REDIS_SERVER    = "127.0.0.1"
     RABBITMQ_SERVER = "127.0.0.1"
+    RABBITMQ_USER   = "vuser"
+    RABBITMQ_PASS   = "vpass"
+    RABBITMQ_VHOST  = "vhost"
 
 #CELERY
-BROKER_URL            = "amqp://followprocess:followprocess@"+RABBITMQ_SERVER+":5672/followprocess_host"
+BROKER_URL            = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
 CELERY_RESULT_BACKEND = "redis://"+REDIS_SERVER+":6379/0"
 
 #CELERY_RESULT_SERIALIZER = 'json'

@@ -15,7 +15,6 @@ services:
       - "6379:6379"
     #volumes:
     #  - ./config/6379.conf:/usr/local/etc/redis/redis.conf
-    network_mode: host
 
   rabbitmq:
     image: rabbitmq:latest
@@ -27,7 +26,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    network_mode: host
 
   web:
     build: .
@@ -40,4 +38,6 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    network_mode: host
+    links:
+      - redis
+      - rabbimq
