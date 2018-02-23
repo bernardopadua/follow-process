@@ -10,17 +10,10 @@ MAINTAINER Bernardo Padua bernactkj@gmail.com
 #    apt-get install -y git && \
 #    apt-get install -y build-essential
 
-#Setting up RabbitMQ
-#RUN #&& \ apt-get install -Y rabbitmq-server
-#    rabbitmqctl add_user processuser mysecretword && \
-#    rabbitmqctl add_vhost processhost && \
-#    rabbitmqctl set_permissions -p processhost processuser ".*" ".*" ".*"
-
 #Adding files
 ADD ./requirements.txt ./requirements.txt
 ADD . /follow-process
 ADD ./entrypoints ./entrypoints
-#WORKDIR follow-process
 
 #Setting up frameworks
 RUN pip install -r requirements.txt

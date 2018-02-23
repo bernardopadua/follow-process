@@ -25,18 +25,17 @@ services:
       RABBITMQ_DEFAULT_VHOST: pvhost
     ports:
       - "5672:5672"
-      - "15672:15672"
 
-  channels:
-    build: .
-    command: ./entrypoints/entry.daphne.sh
-    volumes:
-      - ./:/follow-process
-    ports:
-      - "8001:8001"
-    links:
-      - redis
-      - rabbitmq
+  #channels:
+  #  build: .
+  #  command: ./entrypoints/entry.daphne.sh
+  #  volumes:
+  #    - ./:/follow-process
+  #  ports:
+  #    - "8001:8001"
+  ##  links:
+  #    - redis
+  #    - rabbitmq
 
   worker:
     build: .
@@ -54,7 +53,8 @@ services:
       - ./:/follow-process
     ports:
       - "8000:8000"
+    depends_on:
+      - worker
     links:
       - redis
       - rabbitmq
-      - worker

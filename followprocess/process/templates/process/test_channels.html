@@ -8,7 +8,7 @@
 
                 const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
                   let ws_path   = ws_scheme + '://' + window.location.host + "/process/websock/";
-                const socket    = new WebSocket(ws_path.replace('8000', '8001').replace('172.18.0.6','172.18.0.4'));
+                const socket    = new WebSocket(ws_path);
 
                 const debugging = true;
                 const csl = function(t){
@@ -44,6 +44,10 @@
                             csl('list of processes');
                             csl(request.processes);
                             buildTableProcess(request.processes);
+                            break;
+                        case 'error_message':
+                            showErrorMessage(request.error);
+                            break;
                         default:
                             break;
                     }
@@ -52,9 +56,18 @@
                 $("#btnCreateProcess").click(function(){
                     //$("#create-process-modal").show();
                     csl('aa');
-                })
+                });
 
-                const getListProcesses = function() {
+                $("#btnCloseError").click(function(e){
+                    $("#user-error").parent().hide();
+                });
+
+                const showErrorMessage = function(msg){
+                    $("#user-error span.text").html(msg);
+                    $("#user-error").parent().show();
+                };
+
+                const getListProcesses = function(){
                     const token = $("#follow-process-token").text();
                     socket.send(
                         jsonS({
@@ -64,7 +77,7 @@
                     );
                 };
 
-                const buildTableProcess = function(processes) {
+                const buildTableProcess = function(processes){
                     let rows = "";
                     $.each(JSON.parse(processes), function(i, el){
                         csl('row');
@@ -130,11 +143,17 @@
 
     <div class='container'>
 
-        <div id="follow-process-token" style="display:none;"> {{ token }} </div>
-
         <button id="btnCreateProcess" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#create-process-modal"> Criar Processo </button>
 
         <br><br>
+        <div style="display:none">
+            <div id="user-error" class="alert alert-danger" role="alert" aria-hidden="true">
+                <button id="btnCloseError" type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="text">!!</span>
+            </div>
+        </div>
 
         <div id="follow-process-processos" class="container text-center">
             <div class="table-responsive">

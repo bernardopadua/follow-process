@@ -29,6 +29,10 @@ class UserProcessApiView(
             if nprocesso:
                 pr = Process.objects.get(numero_processo=nprocesso)
                 query = query.filter(process=pr)
+            #TODO Error trying to access this key.
+            #elif self.kwargs["pk"] is not None:
+            #    query = query.filter(pk=self.kwargs["pk"])
+
         else:
             query = UserProcess.objects.none()
         
@@ -53,7 +57,7 @@ class UserProcessApiView(
                 #Notify connected users to app
                 get_user_processes.delay(self.request.user.pk)
             else:
-                msg   = "You can delete a attachment of a process you own."
+                msg   = "You can delete only attachment of a process you own."
                 error = raise_error_message(msg)
                 raise ValidationError(error)
         except:

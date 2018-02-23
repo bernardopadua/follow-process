@@ -30,13 +30,7 @@ def home_app(req):
     try:
         up.addtoken()
         up.save()
-        response = render(
-            req, 
-            'process/test_channels.html', 
-            {
-                "token": up.getoken()
-            }
-        )
+        response = render(req, 'process/test_channels.html')
     except Exception as e:
         response = HttpResponseBadRequest(str(e))
 

@@ -27,7 +27,7 @@ SECRET_KEY = 'j!hs-$s2ot&m$x#kwxkbd9cf^#c7nkaru!pzi^8=#yw)sh95ss'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-IS_DOCKER = True
+IS_DOCKER = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,7 +71,7 @@ else:
     RABBITMQ_VHOST  = "followprocess_host"
 
 #CELERY
-BROKER_URL            = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
+CELERY_BROKER_URL     = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
 CELERY_RESULT_BACKEND = "redis://"+REDIS_SERVER+":6379/0"
 
 #CELERY_RESULT_SERIALIZER = 'json'
@@ -90,7 +90,7 @@ CHANNEL_LAYERS     = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis://"+REDIS_SERVER+":6379/1", 6379)],
+            "hosts": [(REDIS_SERVER, 6379)],
         },
     },
 }

@@ -81,3 +81,9 @@ class ProcessConsumer(AsyncJsonWebsocketConsumer):
             "action": "list_processes",
             "processes": event['processes']
         })
+
+    async def user_error(self, event):
+        await self.send_json({
+            "action": "error_message",
+            "error": event["error"]
+        })
