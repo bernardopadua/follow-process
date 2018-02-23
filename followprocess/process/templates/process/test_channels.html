@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block body %}
+
+    <script type="text/javascript">
+    
+        $(document).ready(
+            function(){
+
+                const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+                  let ws_path   = ws_scheme + '://' + window.location.host + "/process/websock/";
+                const socket    = new WebSocket(ws_path);
+
+                const debugging = true;
+                const csl = function(t){
+                    if(debugging)
+                        console.log(t);
+                };
+
+                const jsonS = function(obj){
+                    return JSON.stringify(obj);
+                };
+
+                // Helpful debugging
+                socket.onopen = function () {
+                    csl("!Websocket connected!");
+                    getListProcesses();
+                };
+                socket.onclose = function () {
+                    csl("!Websocket disconnected!");
+
+                }
+
+                socket.onmessage = function(message) {
+                    csl('message');
+                    csl(message);
+
+                    const request = JSON.parse(message.data);
+
+                    switch (request.action) {
+                        case 'request_ok':
+                            csl('request_ok | wating for it');
+                            break;
+                        case 'list_processes':
+                            csl('list of processes');
+                            csl(request.processes);
+                            buildTableProcess(request.processes);
+                        default:
+                            break;
+                    }
+                };
+
+                $("#btnCreateProcess").click(function(){
+                    //$("#create-process-modal").show();
+                    csl('aa');
+                })
+
+                const getListProcesses = function() {
+                    const token = $("#follow-process-token").text();
+                    socket.send(
+                        jsonS({
+                                "action": "list_processes",
+                                "token": token,
+                        })
+                    );
+                };
+
+                const buildTableProcess = function(processes) {
+                    let rows = "";
+                    $.each(JSON.parse(processes), function(i, el){
+                        csl('row');
+                        csl(el);
+                        const row = `
+                        <tr>
+                            <td>`+el.pk+`</td>
+                            <td>`+el.fields.numero_processo+`</td>
+                            <td>`+el.fields.dados_processo+`</td>
+                            <td>
+                                <button type="button" class="btnDeletar btn btn-primary btn-sm">
+                                    Deletar
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                        rows += row;
+                        return true;
+                    });
+
+                    $("#follow-process-processos tbody").html(rows);
+                    const btnDeletar = function(e) {
+                        const nprocesso = $(e.target).parent().parent().children().first().text();
+                        socket.send(
+                            jsonS({
+                                "action": "delete_process",
+                                "nprocesso": nprocesso
+                            })
+                        );
+                    };
+
+                    $(".btnDeletar").click(btnDeletar);
+                };
+
+                //Modal - Create/Edit Processo
+                const processoModal  = $('#create-process-modal');
+                const inputNProcesso = $('#form-numero-processo');
+                const inputDProcesso = $("#form-dados-processo");
+                const clearModal     = function(){
+                    inputNProcesso.val('');
+                    inputDProcesso.val('');
+                };
+
+                clearModal();
+                $("#btnCreateProcess").click(function(){
+                    socket.send(
+                        jsonS({
+                            "action": "create_process",
+                            "nprocesso": inputNProcesso.val(),
+                            "dprocesso": inputDProcesso.val()
+                        })
+                    );
+                    clearModal();
+                    processoModal.modal('toggle');
+                });
+                //Modal - End Modal block
+            }
+        )
+
+    </script>
+
+    {% include 'process/modal_create_process.html' %}
+
+    <div class='container'>
+
+        <div id="follow-process-token" style="display:none;"> {{ token }} </div>
+
+        <button id="btnCreateProcess" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#create-process-modal"> Criar Processo </button>
+
+        <br><br>
+
+        <div id="follow-process-processos" class="container text-center">
+            <div class="table-responsive">
+                <table id="fprocess-table" class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Numero Processo</th>
+                            <th>Dados Processo</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock body %}
