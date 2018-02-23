@@ -150,3 +150,61 @@ Com esses dois temrinais rodando, já podemos ir até o navegador testar a aplic
 - Endpoints REST
   - http://localhost:8000/api/v1/process
   - http://localhost:8000/api/v1/user_process
+
+### Rodando no Docker
+
+**Instalação Docker**:
+```
+sudo apt-get update
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+sudo apt-get update
+apt-cache policy docker-engine
+sudo apt-get install -y docker-engine
+```
+Após esses comandos o Docker deve estar instalado.
+
+Para verificar se o serviço está rodando é possível utilizar o seguinte comando.
+```
+sudo systemctl status docker
+```
+Deve mostrar o seguinte texto **Active: active (running)**.
+
+Agora temos que instalar o **docker-compose** para subir todas as instâncias necessárias da aplicação.
+
+```
+sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+Com esses comandos o docker-compose deve estar instalado. Certifique-se de ter o **curl** instalado.
+
+Agora dentro da pasta **follow-process** basta rodar o seguinte comando.
+```
+sudo docker-compose build
+```
+O docker irá fazer o build das "imagens" para ficar pronto para rodar.
+
+**Obs: Caso tenha rodado os serviços rabbitmq e redis localmente em sua máquina é necessário desativá-los para rodar o docker-compose. Se não as portas entrarão em conflito e o docker não conseguirá subir os serviços na mesma porta.**
+
+Para desativar um serviço:
+```
+sudo service <service_name> stop
+```
+
+Se tudo estiver correto é só alterar o uma variável do arquivo followprocess.settings, **IS_DOCKER** para o valor **True**.
+
+Feito isso é só rodar o comando.
+```
+sudo docker-compose up
+```
+
+Para visualizar o ip necessário para acessar a aplicação no Docker podemos fazer isso com os seguintes comandos.
+```
+sudo docker ps
+```
+Procure pelo **follow-pocess:latest**, copie o Container Id e rode o seguinte comando.
+```
+sudo docker inspect <container_id>
+```
+
+Docker geralmente sobe as imagens com o ip 172.18.0.4 - 172.18.0.6.
