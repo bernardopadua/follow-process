@@ -118,6 +118,7 @@ Vamos primeiro criar o banco de dados, nesse projeto utilizei o sqlite.
 
 Vamos rodar o comando que irá fazer todo o trabalho.
 ```
+mkdir data
 python manage.py makemigrations process
 python manage.py migrate
 ```
