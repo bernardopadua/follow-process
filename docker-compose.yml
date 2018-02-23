@@ -27,17 +27,34 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  channels:
+    build: .
+    command: ./entrypoints/entry.daphne.sh
+    volumes:
+      - ./:/follow-process
+    ports:
+      - "8001:8001"
+    links:
+      - redis
+      - rabbitmq
+
+  worker:
+    build: .
+    command: ./entrypoints/entry.worker.sh
+    volumes:
+      - ./:/follow-process
+    links:
+      - redis
+
   web:
     build: .
     command: python follow-process/manage.py runserver 0.0.0.0:8000
     image: follow-process:latest
     volumes:
-      - ./data:/follow-process/data
+      - ./:/follow-process
     ports:
       - "8000:8000"
-    depends_on:
-      - redis
-      - rabbitmq
     links:
       - redis
-      - rabbimq
+      - rabbitmq
+      - worker

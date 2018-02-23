@@ -27,9 +27,9 @@ SECRET_KEY = 'j!hs-$s2ot&m$x#kwxkbd9cf^#c7nkaru!pzi^8=#yw)sh95ss'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-IS_DOCKER = False
+IS_DOCKER = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CSRF_COOKIE_SECURE = False
 
@@ -60,15 +60,15 @@ RABBITMQ_VHOST  = ""
 if IS_DOCKER:
     REDIS_SERVER    = "redis"
     RABBITMQ_SERVER = "rabbitmq"
-    RABBITMQ_USER   = "followprocess"
-    RABBITMQ_PASS   = "followprocess"
-    RABBITMQ_VHOST  = "followprocess_host"
+    RABBITMQ_USER   = "puser"
+    RABBITMQ_PASS   = "ppass"
+    RABBITMQ_VHOST  = "pvhost"
 else:
     REDIS_SERVER    = "127.0.0.1"
     RABBITMQ_SERVER = "127.0.0.1"
-    RABBITMQ_USER   = "vuser"
-    RABBITMQ_PASS   = "vpass"
-    RABBITMQ_VHOST  = "vhost"
+    RABBITMQ_USER   = "followprocess"
+    RABBITMQ_PASS   = "followprocess"
+    RABBITMQ_VHOST  = "followprocess_host"
 
 #CELERY
 BROKER_URL            = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
@@ -90,11 +90,10 @@ CHANNEL_LAYERS     = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_SERVER, 6379)],
+            "hosts": [("redis://"+REDIS_SERVER+":6379/1", 6379)],
         },
     },
 }
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

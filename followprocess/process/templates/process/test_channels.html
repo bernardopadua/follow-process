@@ -8,7 +8,7 @@
 
                 const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
                   let ws_path   = ws_scheme + '://' + window.location.host + "/process/websock/";
-                const socket    = new WebSocket(ws_path);
+                const socket    = new WebSocket(ws_path.replace('8000', '8001').replace('172.18.0.6','172.18.0.4'));
 
                 const debugging = true;
                 const csl = function(t){
@@ -17,7 +17,7 @@
                 };
 
                 const jsonS = function(obj){
-                    return JSON.stringify(obj);
+                    return JSON.stringify(obj); 
                 };
 
                 // Helpful debugging

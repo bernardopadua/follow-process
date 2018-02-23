@@ -19,11 +19,13 @@ MAINTAINER Bernardo Padua bernactkj@gmail.com
 #Adding files
 ADD ./requirements.txt ./requirements.txt
 ADD . /follow-process
+ADD ./entrypoints ./entrypoints
 #WORKDIR follow-process
 
 #Setting up frameworks
 RUN pip install -r requirements.txt
 
-RUN chmod +x follow-process/entry.worker.sh
+RUN chmod +x entrypoints/entry.worker.sh
+RUN chmod +x entrypoints/entry.daphne.sh
 
 EXPOSE 8000
