@@ -20,3 +20,11 @@ class ProcessSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(error)
         
         return value
+
+class UserProcessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = UserProcess
+        fields = ['pk', 'user', 'process']
+        read_only_fields = ['pk', 'user']
+
+    #ModelSerializer already validate unique_together
