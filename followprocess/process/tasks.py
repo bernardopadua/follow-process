@@ -71,9 +71,9 @@ def change_process(nprocesso, dprocesso):
 
         if len(up) > 1:
             for us in up:
-                get_user_processes.delay(us.pk, api=api)
+                get_user_processes.delay(us.pk)
         else:
-            get_user_processes.delay(up[0].pk, api=api)
+            get_user_processes.delay(up[0].pk)
     except Error as e:
         logger.error(str(e))
 

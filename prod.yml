@@ -1,0 +1,40 @@
+version: '3.3'
+
+services:
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:latest
+    environment:
+      RABBITMQ_DEFAULT_USER: puser
+      RABBITMQ_DEFAULT_PASS: ppass
+      RABBITMQ_DEFAULT_VHOST: pvhost
+    ports:
+      - "5672:5672"
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./compose/prod/Dockerfile
+    command: /entry.worker.sh
+    volumes:
+      - ./:/follow-process
+
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/prod/Dockerfile
+    command: /entry.gunicorn.sh
+    volumes:
+      - ./:/follow-process
+    ports:
+      - "8000:8000"
+    depends_on:
+      - worker
+    links:
+      - redis
+      - rabbitmq

@@ -27,14 +27,9 @@ SECRET_KEY = 'j!hs-$s2ot&m$x#kwxkbd9cf^#c7nkaru!pzi^8=#yw)sh95ss'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-IS_DOCKER = False
-
 ALLOWED_HOSTS = ['*']
 
-CSRF_COOKIE_SECURE = False
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -57,6 +52,9 @@ RABBITMQ_USER   = ""
 RABBITMQ_PASS   = ""
 RABBITMQ_VHOST  = ""
 
+#Running on Docker ?
+IS_DOCKER = True
+
 if IS_DOCKER:
     REDIS_SERVER    = "redis"
     RABBITMQ_SERVER = "rabbitmq"
@@ -73,11 +71,6 @@ else:
 #CELERY
 CELERY_BROKER_URL     = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
 CELERY_RESULT_BACKEND = "redis://"+REDIS_SERVER+":6379/0"
-
-#CELERY_RESULT_SERIALIZER = 'json'
-#CELERY_ACCEPT_CONTENT    = ['json']
-#CELERY_TASK_SERIALIZER   = 'json'
-
 CELERY_MAX_CACHED_RESULTS = -1
 
 #APP - CONFIG
