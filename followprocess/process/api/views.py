@@ -9,6 +9,7 @@ from followprocess.process.models import Process, UserProcess
 from .serializers import ProcessSerializer, UserProcessSerializer
 from .permissions import IsOwnerOrReadOnly
 from .utils import raise_error_message
+from .exceptions import UserNotAuthorized
 
 class UserProcessApiView(
         mixins.DestroyModelMixin, 
@@ -63,7 +64,7 @@ class UserProcessApiView(
         except:
             msg   = "Can't delete this attachment between User and Process."
             error = raise_error_message(msg)
-            raise ValidationError(error)
+            raise UserNotAuthorized(error)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

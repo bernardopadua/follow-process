@@ -53,7 +53,7 @@ RABBITMQ_PASS   = ""
 RABBITMQ_VHOST  = ""
 
 #Running on Docker ?
-IS_DOCKER = True
+IS_DOCKER = False
 
 if IS_DOCKER:
     REDIS_SERVER    = "redis"
@@ -62,7 +62,7 @@ if IS_DOCKER:
     RABBITMQ_PASS   = "ppass"
     RABBITMQ_VHOST  = "pvhost"
 else:
-    REDIS_SERVER    = "127.0.0.1"
+    REDIS_SERVER    = "localhost"
     RABBITMQ_SERVER = "127.0.0.1"
     RABBITMQ_USER   = "followprocess"
     RABBITMQ_PASS   = "followprocess"
@@ -86,6 +86,14 @@ CHANNEL_LAYERS     = {
             "hosts": [(REDIS_SERVER, 6379)],
         },
     },
+}
+
+#RESTFRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
 }
 
 MIDDLEWARE = [
