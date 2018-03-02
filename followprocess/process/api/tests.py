@@ -2,6 +2,7 @@
 from rest_framework import status
 from rest_framework.reverse import reverse, reverse_lazy
 from rest_framework.test import APITestCase
+from rest_framework_jwt.settings import api_settings
 
 #DJANGO Core
 from django.contrib.auth.models import User
@@ -9,6 +10,10 @@ from django.contrib.auth.models import User
 #INTERNAL Components
 from followprocess.process.models import Process, UserProcess, RestrictProcess
 from followprocess.process.api.views import ProcessApiView
+
+#JWT Test Imports
+payload = api_settings.JWT_PAYLOAD_HANDLER
+encode  = api_settings.JWT_ENCODE_HANDLER
 
 class ProcessTestCase(APITestCase):
 
@@ -73,7 +78,7 @@ class ProcessTestCase(APITestCase):
         }
         url  = reverse("process-list")
         resp = self.client.post(url, data, format='json')
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
     
     def test_nouser_put(self):
         """
@@ -86,7 +91,7 @@ class ProcessTestCase(APITestCase):
         pr   = Process.objects.get(numero_processo="a1")
         url  = reverse("process-detail", kwargs={"pk": pr.pk})
         resp = self.client.put(url, data, format='json')
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
     
     def test_nouser_delete(self):
         """
@@ -98,7 +103,7 @@ class ProcessTestCase(APITestCase):
         pr   = Process.objects.get(numero_processo="a1")
         url  = reverse("process-detail", kwargs={"pk": pr.pk})
         resp = self.client.delete(url, data, format='json')
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
     
     def test_userauth_post(self):
         """
@@ -239,4 +244,79 @@ class ProcessTestCase(APITestCase):
         url = reverse_lazy("delete_user_process", kwargs={"pk": up.pk})
         self.client.login(username="test_case1", password="testcase")
         resp = self.client.delete(url, {"process": pr.pk}, format="json")
-        self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_jwt_userauth_post(self):
+        """
+            Trying to create a process with a JWT.
+        """
+        data = { 
+            "numero_processo": "nn_1",
+            "dados_processo": "Creating Process with a authenticated user"
+        }
+        url  = reverse("process-list")
+        
+        usu = User.objects.get(username="test_case")
+        payload_ = payload(usu)
+        encode_token  = encode(payload_)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT '+encode_token)
+
+        resp = self.client.post(url, data, format='json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+    def test_jwt_userauth_put(self):
+        """
+            Trying to update a process with a JWT.
+        """
+        data = { 
+            "numero_processo": "a1",
+            "dados_processo": "Updating process"
+        }
+        pr   = Process.objects.get(numero_processo="a1")
+        url  = reverse("process-detail", kwargs={"pk": pr.pk})
+        
+        usu = User.objects.get(username="test_case")
+        payload_ = payload(usu)
+        encode_token  = encode(payload_)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT '+encode_token)
+        
+        resp = self.client.put(url, data, format='json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+    def test_jwt_userauth_delete(self):
+        """
+            Trying to delete a process with a JWT.
+        """
+        pr = Process.objects.get(numero_processo="a1")
+        url  = reverse("process-detail", kwargs={"pk": pr.pk})
+
+        usu = User.objects.get(username="test_case")
+        payload_ = payload(usu)
+        encode_token  = encode(payload_)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT '+encode_token)
+
+        resp = self.client.delete(url, {}, format='json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_jwt_delete_not_owned_userprocess_error(self):
+        """
+            [JWT]
+            
+            Trying to delte an attachment of UserProcess.
+            Error on removing an attachment of User <> Process.
+
+            User is is_staff=True but he doesn't 'OWN' the Process.
+        """
+        pr  = Process.objects.get(numero_processo="a3")
+        usu = User.objects.get(username="test_case2")
+        up  = UserProcess.objects.get(user=usu, process=pr)
+        url = reverse_lazy("delete_user_process", kwargs={"pk": up.pk})
+        
+        usu = User.objects.get(username="test_case")
+        payload_ = payload(usu)
+        encode_token  = encode(payload_)
+        self.client.credentials(HTTP_AUTHORIZATION='JWT '+encode_token)
+
+        resp = self.client.delete(url, {"process": pr.pk}, format="json")
+        print(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
