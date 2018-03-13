@@ -4,6 +4,7 @@ django-filter>=1.1.0
 Markdown>=2.6.11
 djangorestframework>=3.7.7
 djangorestframework-jwt>=1.11.0
+django-cors-headers
 
 celery>=4.1.0
 kombu>=4.1.0
