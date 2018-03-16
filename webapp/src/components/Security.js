@@ -1,0 +1,1 @@
+// obfuscate token to set as cookie

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { browserHistory, Switch, Redirect } from 'react-router';
-import { BrowserRouter as Router, NavLink, Route, IndexRoute } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import FollowProcessAPI from './components/api'
+import Logger from './components/Logger'
 
 import Header from './components/Header'
 import Login from './components/Login'
@@ -20,17 +21,51 @@ class App extends React.Component {
             }
         };
 
+        this.debugging = true;
+
         this.api = new FollowProcessAPI();
+        this.l   = new Logger(this.debugging);
+
+        this.debuggingState();
+
+    }
+
+    debuggingState(){
+        //Make testing faster when debugging
+        if(this.debugging){
+            this.state = {
+                auth: {
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MjEyMjUwOTMsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInVzZXJfaWQiOjF9.Ucdc2q5csJDppXQsZksvGGIDgbMAPVP9JKSd3pGXLUY",
+                    logged: true
+                }
+            };
+        }
     }
 
     doLogin(login, pass){
-        console.log("LOGIN:: " + login);
-        console.log("PASSS:: " + pass);
+        this.l.log(["Login:: " + login, "Pass:: " + pass]);
+
         this.api.getToken(login, pass)
         .then(
             response => {
-                console.log("response doLogin");
-                console.log(response);
+                this.l.log(["thenDoLOGIN", response]);
+
+                const data = response.data;
+                if(data.token){
+                    this.setState(
+                        {
+                            auth: {
+                                logged: true,
+                                token: data.token
+                            }
+                        }
+                    );
+                }
+            }
+        )
+        .catch(
+            response => {
+                this.l.log(["Error:: ", response]);
             }
         );
     }
@@ -42,8 +77,9 @@ class App extends React.Component {
                     <Header logged={this.state.auth.logged} />
                     <div className="container">
                         <div className="row">
-                            <div className="col- text-center">
+                            <div className="col text-center">
                                 <Switch>
+
                                     <Route path='/' exact
                                         component={ 
                                             () => (
@@ -54,16 +90,19 @@ class App extends React.Component {
                                             )
                                         }
                                     />
-                                    
+
                                     <Route path='/home' exact
-                                        render={
+                                        component={
                                             () => ( 
                                                 <Home 
-                                                    logged={this.state.auth.logged}
+                                                    logger={this.debugging}
+                                                    auth={this.state.auth}
                                                 /> 
                                             )
                                         } 
                                     />
+                                            
+
                                 </Switch>
                             </div>
                         </div>

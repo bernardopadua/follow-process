@@ -8,7 +8,9 @@ export default ({ activePage, clickPagination, maxPage }) => {
 
         return (
             <li className={pageClass}>
-                <a onClick={clickPagination} className="page-link" page={num}> { num } </a>
+                <a onClick={() => {
+                    clickPagination(num);
+                }} className="page-link" page={num}> { num } </a>
             </li>
         );
     };
@@ -20,28 +22,41 @@ export default ({ activePage, clickPagination, maxPage }) => {
     let previousClass = "";
     let nextClass     = "";
 
-    if(activePage > 1){
+    if(activePage==1 && maxPage==(activePage+1)){
+        midPage  = getListItem(activePage, true);
+        postPage = getListItem(activePage+1);
+    } else if(activePage==maxPage && maxPage>1){
+        prevPage = getListItem(activePage-1);
+        midPage  = getListItem(activePage, true);
+    } else if(activePage>1 && activePage<maxPage){
         prevPage = getListItem(activePage-1);
         midPage  = getListItem(activePage, true);
         postPage = getListItem(activePage+1);
         previousClass = "page-item";
-    } else if(activePage == 1){
+    } else if(activePage==1 && maxPage>=(activePage+2)){
         prevPage = getListItem(activePage, true);
         midPage  = getListItem(activePage+1);
         postPage = getListItem(activePage+2);
-        previousClass = "page-item disabled";
+        previousClass = "d-none";
+    } else {
+        midPage  = getListItem(activePage);
+        previousClass = "d-none"
     }
 
     if(activePage==maxPage)
-        nextClass = "page-item disabled"
+        nextClass = "d-none"
     else 
         nextClass = "page-item";
 
     return (
         <nav aria-label="Page navigation example">
-            <ul className="pagination">
+            <ul className="pagination pagination-sm">
                 <li className={previousClass}>
-                    <a className="page-link" href="#">Previous</a>
+                    <a onClick={ 
+                        () => {
+                            clickPagination(activePage-1)
+                        } 
+                    } className="page-link" href="#">Previous</a>
                 </li>
                 {
                     prevPage
@@ -53,7 +68,11 @@ export default ({ activePage, clickPagination, maxPage }) => {
                     postPage
                 }
                 <li className={nextClass}>
-                    <a className="page-link" href="#">Next</a>
+                    <a onClick={ 
+                        () => {
+                            clickPagination(activePage+1)
+                        } 
+                    } className="page-link" href="#">Next</a>
                 </li>
             </ul>
         </nav>
