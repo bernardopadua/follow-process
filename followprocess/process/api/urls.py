@@ -8,7 +8,7 @@ from rest_framework import routers
 from followprocess.process.api import views as api_views
 
 router = routers.DefaultRouter()
-router.register(r"process", api_views.ProcessApiView, base_name="process")
+router.register(r"process", api_views.ProcessApiView, basename="process")
 
 userprocess = api_views.UserProcessApiView.as_view()
 
