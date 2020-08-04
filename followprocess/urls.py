@@ -10,8 +10,7 @@ from followprocess.process import views as p_views
 urlpatterns = [
     re_path(r'^$', RedirectView.as_view(pattern_name='homeapp', permanent=False), name="index"),
     re_path(r'^login$', 
-        auth_views.login, 
-        {'template_name': 'process/login.html'}, 
+        auth_views.LoginView.as_view(template_name='process/login.html'), 
         name='login'
     ),
     re_path(r'^home/$', p_views.home_app, name="homeapp"),

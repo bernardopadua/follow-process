@@ -12,15 +12,15 @@ from .models import UserAdditional
 #PYTHON Components
 import logging
 
+#DJANGO logging instance
+logger = logging.getLogger(__name__)
+
 class ProcessConsumer(AsyncJsonWebsocketConsumer):
     """
         Consumer class for the /home/ app.
     """
 
     async def connect(self):
-        #DJANGO logging instance
-        logger = logging.getLogger(__name__)
-
         user = self.scope["user"]
         if user.is_authenticated:
             
