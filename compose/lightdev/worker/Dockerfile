@@ -38,7 +38,7 @@ RUN wget -O /tmp/entry.installing.tools.sh https://gist.githubusercontent.com/be
 RUN git clone --single-branch --branch development https://github.com/bernardopadua/follow-process.git
 
 #Minor steps to complete && installing python modules
-RUN wget -O /tmp/entry.django.sh https://gist.githubusercontent.com/bernardopadua/479208f7e0b11fa86180ffd90d005618/raw/a6e5b3caa11e5e5fe890462df756d94f089ae73e/entry.django.sh \
+RUN wget -O /tmp/entry.django.sh https://gist.githubusercontent.com/bernardopadua/479208f7e0b11fa86180ffd90d005618/raw/22ef580aa3fb836b2e4bc647f1572f14e1ba1cf3/entry.django.sh \
  && chmod +x /tmp/entry.django.sh \
  && wget -O /tmp/entry.worker.sh https://gist.githubusercontent.com/bernardopadua/ed69d8003712ba334ef2a104168df074/raw/12bb79e5332bbeb1fbadc824b3e573fe25584545/entry.worker.sh \
  && chmod +x /tmp/entry.worker.sh \
@@ -51,5 +51,5 @@ RUN wget -O /tmp/entry.django.sh https://gist.githubusercontent.com/bernardopadu
 EXPOSE 8000
 WORKDIR /follow-process
 
-ENTRYPOINT [ "/tmp/entry.django.sh" ]
+ENTRYPOINT [ "/tmp/entry.worker.sh" ]
 #--

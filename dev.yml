@@ -30,19 +30,13 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./compose/dev/Dockerfile
-    command: /entry.worker.sh
-    volumes:
-      - ./:/follow-process
+      dockerfile: ./compose/lightdev/worker/Dockerfile
     network_mode: 'host'
 
   web:
     build:
       context: .
-      dockerfile: ./compose/dev/Dockerfile
-    command: /entry.startdjango.sh
-    volumes:
-      - ./:/follow-process
+      dockerfile: ./compose/lightdev/Dockerfile
     network_mode: 'host'
     ports:
       - "8000:8000"
