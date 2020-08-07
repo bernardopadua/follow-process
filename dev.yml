@@ -6,6 +6,7 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    network_mode: 'host'
 
   rabbitmq:
     image: rabbitmq:latest
@@ -15,6 +16,16 @@ services:
       RABBITMQ_DEFAULT_VHOST: pvhost
     ports:
       - "5672:5672"
+    network_mode: 'host'
+  
+  postgres:
+    image: fppostgres:latest
+    build:
+      context: .
+      dockerfile: ./compose/database/Dockerfile
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/ndata
+    network_mode: 'host'
 
   worker:
     build:
@@ -23,6 +34,7 @@ services:
     command: /entry.worker.sh
     volumes:
       - ./:/follow-process
+    network_mode: 'host'
 
   web:
     build:
@@ -31,10 +43,9 @@ services:
     command: /entry.startdjango.sh
     volumes:
       - ./:/follow-process
+    network_mode: 'host'
     ports:
       - "8000:8000"
     depends_on:
       - worker
-    links:
-      - redis
-      - rabbitmq
+      - postgres

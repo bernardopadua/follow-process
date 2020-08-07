@@ -1,12 +1,14 @@
 Django>=2.0.2
 
 django-filter>=1.1.0
+environs
 Markdown>=2.6.11
 djangorestframework>=3.7.7
 djangorestframework-jwt>=1.11.0
 
+psycopg2
 celery>=4.1.0
-kombu>=4.1.0
+kombu==4.*
 billiard>=3.5.0.3
 amqp>=2.2.2
 redis>=2.10.6
