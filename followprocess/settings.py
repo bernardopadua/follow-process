@@ -43,7 +43,7 @@ RABBITMQ_PASS   = ""
 RABBITMQ_VHOST  = ""
 
 #Running on Docker ?
-IS_DOCKER = cenv("IS_DOCKER")
+IS_DOCKER = cenv.bool("IS_DOCKER")
 
 if IS_DOCKER:
     REDIS_SERVER    = "localhost"#"redis"
@@ -53,14 +53,23 @@ if IS_DOCKER:
     RABBITMQ_VHOST  = "pvhost"
 else:
     REDIS_SERVER    = cenv("REDIS_SERVER")
+    REDIS_PORT      = cenv("REDIS_PORT")
+    REDIS_USER      = cenv("REDIS_USER")
+    REDIS_PASSWORD  = cenv("REDIS_PASSWORD")
+    REDIS_HOST      = cenv("REDIS_HOST")
     RABBITMQ_SERVER = cenv("RABBITMQ_SERVER")
     RABBITMQ_USER   = cenv("RABBITMQ_USER")
     RABBITMQ_PASS   = cenv("RABBITMQ_PASS")
     RABBITMQ_VHOST  = cenv("RABBITMQ_VHOST")
 
 #CELERY
-CELERY_BROKER_URL     = "amqp://"+RABBITMQ_USER+":"+RABBITMQ_PASS+"@"+RABBITMQ_SERVER+":5672/"+RABBITMQ_VHOST
-CELERY_RESULT_BACKEND = "redis://"+REDIS_SERVER+":6379/0"
+REDIS_CHANNELS_HOST       = [(REDIS_SERVER, 6379)]
+CELERY_BROKER_URL         = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASS}@{RABBITMQ_SERVER}:5672/{RABBITMQ_VHOST}"
+if REDIS_SERVER != '':
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_SERVER}:6379/0"
+else:
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}"
+    REDIS_CHANNELS_HOST   = [CELERY_RESULT_BACKEND]
 CELERY_MAX_CACHED_RESULTS = -1
 
 #APP - CONFIG
@@ -73,7 +82,7 @@ CHANNEL_LAYERS     = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_SERVER, 6379)],
+            "hosts": REDIS_CHANNELS_HOST,
         },
     },
 }
