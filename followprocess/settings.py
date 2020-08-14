@@ -53,7 +53,7 @@ RABBITMQ_PASS   = ""
 RABBITMQ_VHOST  = ""
 
 #Running on Docker ?
-IS_DOCKER = cenv.bool("IS_DOCKER")
+IS_DOCKER = bool(cenv("IS_DOCKER"))
 
 if IS_DOCKER:
     REDIS_SERVER    = "localhost"#"redis"
