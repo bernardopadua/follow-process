@@ -1,6 +1,0 @@
-# still on testing . not using yet
-build:
-    docker:
-        web: ./compose/lighdev/Dockerfile
-release:
-    image: web

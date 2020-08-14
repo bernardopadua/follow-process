@@ -4,9 +4,19 @@ from environs import Env
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'followprocess.settings')
 
-#Custom envs
-cenv = Env()
-cenv.read_env('.env')
+cenv = None
+
+if os.path.exists('.env'):
+    #Custom envs
+    cenv = Env()
+    cenv.read_env('.env')
+else:
+    def cenv_f(vari):
+        if vari in os.environ:
+            return os.environ[vari]
+        else:
+            return None
+    cenv = cenv_f
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
