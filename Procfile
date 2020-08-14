@@ -1,1 +1,0 @@
-web: gunicorn followprocess.wsgi --log-file -
