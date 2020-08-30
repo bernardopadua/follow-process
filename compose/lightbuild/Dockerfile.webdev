@@ -29,25 +29,20 @@ FROM alpine:latest
 
 # ONLINE
 
-#Installing resources ONLINE
-RUN wget -O /tmp/entry.installing.tools.sh https://raw.githubusercontent.com/bernardopadua/follow-process/development/compose/lightdev/entryinstalling/entry.installing.tools.sh \
- && chmod +x /tmp/entry.installing.tools.sh \
- && ./tmp/entry.installing.tools.sh
+#TRAVIS deployment
+COPY . /follow-process
 
-#Creating project from git
-RUN git clone --single-branch --branch development https://github.com/bernardopadua/follow-process.git
+#Execution mode for scripts
+RUN chmod +x /follow-process/compose/lightbuild/entrypoint/entry.django.sh \
+ && chmod +x /follow-process/compose/lightbuild/entrypoint/entry.worker.sh \
+ && chmod +x /follow-process/compose/lightbuild/entryinstalling/entry.installing.tools.sh 
 
-#Minor steps to complete && installing python modules
-RUN chmod +x ./follow-process/compose/lightdev/entrypoint/entry.django.sh \
- && chmod +x ./follow-process/compose/lightdev/entrypoint/entry.worker.sh \
- && pip install -r ./follow-process/requirements/requirements_base.txt
+RUN /follow-process/compose/lightbuild/entryinstalling/entry.installing.tools.sh \
+ && pip install -r /follow-process/requirements/requirements_base.txt
 #--
 
 # BOTH
 
 #Running DEV server
-EXPOSE 8000
 WORKDIR /follow-process
-
-ENTRYPOINT [ "./compose/lightdev/entrypoint/entry.worker.sh" ]
 #--

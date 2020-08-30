@@ -38,20 +38,15 @@ RUN wget -O /tmp/entry.installing.tools.sh https://raw.githubusercontent.com/ber
 RUN git clone --single-branch --branch development https://github.com/bernardopadua/follow-process.git
 
 #Minor steps to complete && installing python modules
-RUN wget -O ./follow-process/compose/lightdev/entrypoint/entry.django.sh https://gist.githubusercontent.com/bernardopadua/479208f7e0b11fa86180ffd90d005618/raw/83597ccc163a663724388b12145f4a0164acfdd6/entry.django.sh \
- && chmod +x ./follow-process/compose/lightdev/entrypoint/entry.django.sh \
- && chmod +x ./follow-process/compose/lightdev/entrypoint/entry.worker.sh
-
-RUN pip install -r ./follow-process/requirements/requirements_base.txt
+RUN chmod +x ./follow-process/compose/lightdev/entrypoint/entry.django.sh \
+ && chmod +x ./follow-process/compose/lightdev/entrypoint/entry.worker.sh \
+ && pip install -r ./follow-process/requirements/requirements_base.txt
 #--
-
-COPY ./.env ./follow-process/.env
 
 # BOTH
 
 #Running DEV server
-#EXPOSE 8000
 WORKDIR /follow-process
 
-CMD [ "./compose/lightdev/entrypoint/entry.django.sh" ]
+ENTRYPOINT [ "./compose/lightdev/entrypoint/entry.worker.sh" ]
 #--

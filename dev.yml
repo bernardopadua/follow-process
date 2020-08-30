@@ -30,13 +30,13 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./compose/lightdev/worker/Dockerfile
+      dockerfile: ./compose/lightbuild/worker/Dockerfile
     network_mode: 'host'
 
   web:
     build:
       context: .
-      dockerfile: ./compose/lightdev/Dockerfile
+      dockerfile: ./compose/lightbuild/Dockerfile
     network_mode: 'host'
     ports:
       - "8000:8000"
